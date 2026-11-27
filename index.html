@@ -12,7 +12,7 @@
   --bg:#f4f3f0; --surface:#fcfcfb; --surface-2:#f0efec; --line:#e2e0da; --grid:#ebe9e4;
   --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#83817b;
   --accent:#1c5cab; --accent-soft:#e3eefc;
-  --s1:#eda100; --s2:#2a78d6; --s3:#eb6834; --s4:#1baf7a; --e2:#6250d6;
+  --s1:#eda100; --s2:#2a78d6; --s3:#eb6834; --s4:#1baf7a; --e2:#6250d6; --mv:#b4b2aa;
   --enc-con:#008300; --enc-sin:#e87ba4;
   --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
   --div-neg:#2a78d6; --div-mid:#f0efec; --div-pos:#d03b3b;
@@ -24,7 +24,7 @@
     --bg:#121211; --surface:#1a1a19; --surface-2:#232321; --line:#33332f; --grid:#2a2a27;
     --ink:#f0efec; --ink-2:#c3c2b7; --ink-3:#8f8d86;
     --accent:#6da7ec; --accent-soft:#1c2a3d;
-    --s1:#c98500; --s2:#3987e5; --s3:#d95926; --s4:#199e70; --e2:#9085e9;
+    --s1:#c98500; --s2:#3987e5; --s3:#d95926; --s4:#199e70; --e2:#9085e9; --mv:#5f5e59;
     --enc-con:#008300; --enc-sin:#d55181;
     --div-neg:#3987e5; --div-mid:#383835; --div-pos:#e66767;
     --plan:#3e5f86; --real:#86b6ef;
@@ -188,6 +188,21 @@ body.locked header.top,body.locked main{visibility:hidden}
       <span class="muted" id="procMsg"></span>
     </div>
   </div>
+  <div class="card" id="gsCard">
+    <h2>Base en Google Sheets</h2>
+    <p class="hint">El tablero puede leer la base desde una planilla de Google Sheets <b>publicada en la web</b>. Una vez guardado el enlace, cada vez que abrís el tablero trae la última versión de la planilla (si no cambió, usa lo que ya tiene guardado). La planilla reemplaza todas las bases cargadas en este navegador. Ojo: con "Publicar en la web" cualquiera que tenga el enlace puede ver los datos.</p>
+    <div class="row"><input id="gsUrl" type="url" placeholder="Pegá el enlace de Archivo → Compartir → Publicar en la web" style="flex:1;min-width:300px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit">
+      <button class="btn primary" id="gsSave">Guardar y cargar</button><button class="btn" id="gsNow">Actualizar ahora</button><button class="btn" id="gsOff">Quitar enlace</button></div>
+    <div class="muted" id="gsMsg" style="margin-top:8px;font-size:13px"></div>
+    <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600;font-size:13.5px">Cómo preparar la planilla</summary>
+      <ol style="font-size:13px;line-height:1.6;margin:8px 0 0 18px">
+        <li>Tocá <b>⬇ Descargar base para Google Sheets</b> (abajo). También sirve el Excel de tiempos calculados si mostrás la hoja oculta <code>_DATOS</code>.</li>
+        <li>Subilo a Google Drive y abrilo con Google Sheets (Archivo → Guardar como hoja de cálculo de Google).</li>
+        <li>En Sheets: <b>Archivo → Compartir → Publicar en la web</b>. Elegí la hoja <code>_DATOS</code>, formato <b>Valores separados por comas (.csv)</b>, y tocá Publicar. Dejá tildado "Volver a publicar automáticamente cuando se hagan cambios".</li>
+        <li>Copiá el enlace, pegalo arriba y tocá <b>Guardar y cargar</b>.</li>
+        <li>Para actualizar la base, reemplazá el contenido de la hoja <code>_DATOS</code> con el de una descarga nueva. Google puede tardar unos minutos en publicar los cambios.</li></ol></details>
+    <div class="row" style="margin-top:10px"><button class="btn" id="btnGs">⬇ Descargar base para Google Sheets</button></div>
+  </div>
   <details class="card" id="diag">
     <summary style="cursor:pointer;font-weight:600;font-size:15px">🔎 Diagnóstico de bases <span class="muted" style="font-weight:400;font-size:12.5px">— qué meses y días están cargados, qué no cruza y calidad de datos (clic para mostrar u ocultar)</span></summary>
     <div class="row" style="margin:14px 0 6px"><span class="muted" style="font-size:12.5px">Mes a analizar</span><select id="dMes"></select><button class="btn sm" data-copy="tblDPat">Copiar patentes</button></div>
@@ -275,7 +290,7 @@ body.locked header.top,body.locked main{visibility:hidden}
 
     <div class="grid2">
       <div class="card">
-        <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>Zonas del CD con mayor tiempo</h2><p class="hint" style="margin:0">Minutos (mediana) por ruta dentro de cada zona, entre la fichada y la salida (geocercas + checklist). Dock, carga/descarga y gatera solo cuentan en rutas sin encierro (con encierro el camión ya está cargado).</p></div>
+        <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>Zonas del CD con mayor tiempo</h2><p class="hint" style="margin:0">Minutos (mediana) por ruta dentro de cada zona del tiempo de liberación, entre la fichada y la salida. Checklist = zona check 360° (registro del checklist; si falta, geocerca). Dock y gatera solo cuentan en rutas sin encierro (con encierro el camión ya está cargado).</p></div>
         <div class="seg" id="radMode"><button data-v="ol" class="on">Por operador</button><button data-v="tot">Total CD</button></div></div>
         <div class="legend" id="legRad" style="margin-top:10px"></div>
         <div class="chart" id="chRad"></div>
@@ -288,8 +303,8 @@ body.locked header.top,body.locked main{visibility:hidden}
     </div>
 
     <div class="grid2">
-      <div class="card"><h2>Sin encierro: ¿dónde se va el tiempo?</h2><p class="hint">Minutos (mediana) de cada tramo por operador (rutas con todos los tramos registrados).</p><div class="legend" id="legSin"></div><div class="chart" id="chSin"></div></div>
-      <div class="card"><h2>Con encierro: ¿dónde se va el tiempo?</h2><p class="hint">Minutos (mediana) de cada tramo por operador.</p><div class="legend" id="legCon"></div><div class="chart" id="chCon"></div></div>
+      <div class="card"><h2>¿Dónde se va el tiempo? Desplazamientos entre zonas</h2><p class="hint">Mediana total CD (minutos) del traslado de una zona a la siguiente, en el orden del proceso. Rutas con todos los tramos registrados. Raya vertical: meta del tramo.</p><div class="chart" id="chDesp"></div></div>
+      <div class="card"><h2>¿Dónde se va el tiempo? Atención en cada zona</h2><p class="hint">Mediana total CD (minutos) del tiempo de atención en cada zona. Team Room: rutas con Team Room. Carga en dock y gatera: rutas sin encierro. Raya vertical: meta.</p><div class="chart" id="chZona"></div></div>
     </div>
 
     <div class="grid2">
@@ -552,24 +567,37 @@ body.locked header.top,body.locked main{visibility:hidden}
 
 <script>
 /* Espacio de guardado propio de cada copia publicada (GitHub Pages comparte el mismo origen entre repos) */
+const COPIA=false; // true en TABLERO-TIEMPOS-2026 (copia), false en el tablero original
 const NS=(()=>{try{if(!/github\.io$/i.test(location.hostname))return'';const seg=(location.pathname.split('/').filter(Boolean)[0]||'').toLowerCase();return(!seg||seg==='tablero-tiempos')?'':'__'+seg.replace(/[^a-z0-9-]/g,'')}catch(e){return''}})();
 /* =================================================================
    CONFIG
 ================================================================= */
 const OLN={RDV:'Río de las Vueltas',TL:'Transporte Levon',ST:'Special Truck',TOL:'Transporte Online',EB:'Express Beer'};
-const TS=[ // sin encierro
- {k:'s1',n:'Ingreso → dock',c:'--s1',d:'Primera fichada del molinete hasta que el camión entra al dock depósito (incluye Team Room y checklist).'},
- {k:'s2',n:'Carga en dock',c:'--s2',d:'Entrada al dock depósito hasta la última salida del dock.'},
- {k:'s3',n:'Dock → gatera',c:'--s3',d:'Salida del dock hasta que el camión sale de la gatera de expedición.'},
- {k:'s4',n:'Gatera → portería',c:'--s4',d:'Salida de la gatera hasta la salida del CD registrada en SIC Liberación (control de portería).'}];
-const TC=[ // con encierro
- {k:'e1',n:'Ingreso → checklist',c:'--s1',d:'Primera fichada del molinete hasta el inicio del checklist de salida.'},
- {k:'e2',n:'Checklist',c:'--e2',d:'Duración del checklist de salida.'},
- {k:'e3',n:'Checklist → portería',c:'--s4',d:'Fin del checklist hasta la salida del CD (SIC Liberación / control de portería).'}];
+const OL_OK=r=>!COPIA||!!OLN[r.ol]; // solo se muestran estos cinco operadores logísticos
+const TS=[ // sin encierro · en el orden del proceso
+ {k:'s1',n:'Molinete → Team Room',s:'→ TR',c:'--mv',d:'Desplazamiento desde la primera fichada del molinete hasta el Team Room (0 si no corresponde).'},
+ {k:'s2',n:'Team Room',s:'TR',c:'--e2',d:'Duración del Team Room, si corresponde.'},
+ {k:'s3',n:'→ Checklist',s:'→ Check',c:'--mv',d:'Desplazamiento hasta el inicio del checklist de salida.'},
+ {k:'s4',n:'Checklist',s:'Check',c:'--s1',d:'Duración del checklist de salida.'},
+ {k:'s5',n:'Checklist → dock',s:'→ Dock',c:'--mv',d:'Desplazamiento desde el checklist hasta el ingreso al dock.'},
+ {k:'s6',n:'Carga en dock',s:'Carga',c:'--s2',d:'Carga del camión: ingreso al dock hasta la salida del dock.'},
+ {k:'s7',n:'Dock → gatera',s:'→ Gatera',c:'--mv',d:'Desplazamiento desde el dock hasta la gatera.'},
+ {k:'s8',n:'Gatera (verificación)',s:'Gatera',c:'--s3',d:'Control de verificación en la gatera.'},
+ {k:'s9',n:'Gatera → portería',s:'→ Port.',c:'--mv',d:'Desplazamiento desde la gatera hasta la portería.'},
+ {k:'s10',n:'Control de portería',s:'Portería',c:'--s4',d:'Control de portería hasta la salida del CD (SIC Liberación).'}];
+const TC=[ // con encierro · el camión ya está cargado: sin dock ni gatera
+ {k:'e1',n:'Molinete → Team Room',s:'→ TR',c:'--mv',d:'Desplazamiento desde la primera fichada del molinete hasta el Team Room (0 si no corresponde).'},
+ {k:'e2',n:'Team Room',s:'TR',c:'--e2',d:'Duración del Team Room, si corresponde.'},
+ {k:'e3',n:'→ Checklist',s:'→ Check',c:'--mv',d:'Desplazamiento hasta el inicio del checklist de salida.'},
+ {k:'e4',n:'Checklist',s:'Check',c:'--s1',d:'Duración del checklist de salida.'},
+ {k:'e5',n:'Checklist → portería',s:'→ Port.',c:'--mv',d:'Desplazamiento desde el checklist hasta la portería.'},
+ {k:'e6',n:'Control de portería',s:'Portería',c:'--s4',d:'Control de portería hasta la salida del CD (SIC Liberación).'}];
+const STEPS=[['Molinete → Team Room','s1','e1'],['Team Room','s2','e2'],['→ Checklist','s3','e3'],['Checklist','s4','e4'],['Checklist → dock','s5',null],['Carga en dock','s6',null],['Dock → gatera','s7',null],['Gatera (verificación)','s8',null],['→ Portería','s9','e5'],['Control de portería','s10','e6']];
+const hashN=x=>{let h=2166136261;const t=String(x);for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return((h>>>0)%10007)/10007};
 const ALLT=[...TS,...TC];
-const META_DEF={encGeo:1,tot:30,s1:15,s2:30,s3:10,s4:10,e1:10,e2:7,e3:10,encH:1,maxTot:240};
+const META_DEF={encGeo:1,tot:30,s1:5,s2:15,s3:5,s4:4,s5:5,s6:20,s7:3,s8:5,s9:3,s10:5,e1:5,e2:15,e3:5,e4:4,e5:5,e6:5,encH:1,maxTot:240,finMax:COPIA?30:0};
 let METAS=Object.assign({},META_DEF);
-try{const m=JSON.parse(localStorage.getItem('tt4_metas'+NS)||'null');if(m)METAS=Object.assign({},META_DEF,m)}catch(e){}
+try{const m=JSON.parse(localStorage.getItem('tt5_metas'+NS)||'null');if(m)METAS=Object.assign({},META_DEF,m)}catch(e){}
 
 const BASES=[
  {k:'salida',grp:'pre',n:'Salida de choferes',req:1,d:'Base pie: una fila por ruta.',cols:['Fecha','Planilla','Chofer','DNI','OL'],sheet:/salida.*chofer|base.*tiempo|salidachofer/},
@@ -596,10 +624,11 @@ const digits=s=>{const d=String(s??'').trim().replace(/[.,]0+$/,'').replace(/\D/
 const pad=n=>String(n).padStart(2,'0');
 const ymdOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const ymdT=t=>t==null?null:ymdOf(new Date(t));
-const fmtD=ymd=>{if(!ymd)return'';const[y,m,d]=ymd.split('-');return d+'/'+m+'/'+y};
-const fmtT=t=>{if(t==null)return'';const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes())};
-const fmtDT=t=>{if(t==null)return'';const d=new Date(t);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
-const fmtMin=m=>{if(m==null||isNaN(m))return'';const t=Math.round(Math.abs(m));return(m<0?'-':'')+pad(Math.floor(t/60))+':'+pad(t%60)};
+let XM=false;const XV=(v,z)=>({__x:1,v,z});const XS=t=>(t-new Date(t).getTimezoneOffset()*60000)/864e5+25569; // serial de Excel con la hora local exacta // XM: exportación a Excel con tipos de dato (fecha, hora, duración)
+const fmtD=ymd=>{if(!ymd)return'';if(XM){const[y,m,d]=ymd.split('-').map(Number);return XV(Date.UTC(y,m-1,d)/864e5+25569,'dd/mm/yyyy')}const[y,m,d]=ymd.split('-');return d+'/'+m+'/'+y};
+const fmtT=t=>{if(t==null)return'';if(XM)return XV(XS(t),'hh:mm');const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtDT=t=>{if(t==null)return'';if(XM)return XV(XS(t),'dd/mm/yyyy hh:mm');const d=new Date(t);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtMin=m=>{if(m==null||isNaN(m))return'';if(XM&&m>=0)return XV(m/1440,'[h]:mm');const t=Math.round(Math.abs(m));return(m<0?'-':'')+pad(Math.floor(t/60))+':'+pad(t%60)};
 const r1=v=>v==null||isNaN(v)?'–':(Math.round(v*10)/10).toLocaleString('es-AR',{maximumFractionDigits:1});
 const r0=v=>v==null||isNaN(v)?'–':Math.round(v).toLocaleString('es-AR');
 const pct=v=>v==null||isNaN(v)?'–':Math.round(v*100)+'%';
@@ -848,7 +877,7 @@ async function ingest(files,forceKey){
       else sheets=await readFile(f);
     }catch(e){console.error(e);log.push(`✗ ${f.name}: no se pudo leer`);continue}
     busy(true,`Procesando ${f.name}…`);await new Promise(r=>setTimeout(r,20));
-    const DT=sheets.find(x=>x.name==='_DATOS');
+    const DT=sheets.find(x=>x.name==='_DATOS')||(sheets.length===1&&String(sheets[0].aoa[0]?.[0]??'').trim()==='datos'?sheets[0]:null);
     if(DT){try{log.push(`Base completa (Excel de tiempos): ${f.name}`);const lines=[];let cur='';for(let i=1;i<DT.aoa.length;i++){const r=DT.aoa[i];if(!r)continue;cur+=String(r[0]??'');if(+r[1]===1){lines.push(cur);cur=''}}if(cur)lines.push(cur);
       const nb=await importFullLines(lines,f.name,log);if(!nb)log.push(`✗ ${f.name}: no tiene bases para cargar`)}catch(e){console.error(e);log.push(`✗ ${f.name}: ${e.message||'no se pudo leer'}`)}continue}
     if(sheets.some(x=>x.name==='TIEMPOS_INFO')){log.push(`✗ ${f.name}: este Excel de tiempos es de una versión anterior y no trae los datos. Descargalo de nuevo desde el tablero original.`);continue}
@@ -950,24 +979,25 @@ function build(){
   const sal=S.salida.rows;
   const sic=new Map();(S.sic?.rows||[]).forEach(r=>{if(!sic.has(r.p))sic.set(r.p,r)});
   const b450=new Map(),b450pf=new Map();(S.b450?.rows||[]).forEach(r=>{if(!b450.has(r.p))b450.set(r.p,r);if(r.pat&&r.fr)b450pf.set(r.pat+'|'+r.fr,r)});
-  const molE=new Map();(S.molE?.rows||[]).forEach(r=>{const k=r.d+'|'+ymdT(r.t);const v=molE.get(k);if(v==null||r.t<v)molE.set(k,r.t)});
-  const molS=new Map();(S.molS?.rows||[]).forEach(r=>{const k=r.d+'|'+ymdT(r.t);const v=molS.get(k);if(v==null||r.t>v)molS.set(k,r.t)});
+  const molE=new Map();(S.molE?.rows||[]).forEach(r=>{const k=r.d+'|'+ymdT(r.t);const v=molE.get(k);if(v==null||r.t<v.t)molE.set(k,r)});
+  const molS=new Map();(S.molS?.rows||[]).forEach(r=>{const k=r.d+'|'+ymdT(r.t);const v=molS.get(k);if(v==null||r.t>v.t)molS.set(k,r)});
   const tr=new Map();(S.tr?.rows||[]).forEach(r=>{const k=r.d+'|'+r.f;const v=tr.get(k);if(!v||(r.a!=null&&(v.a==null||r.a<v.a)))tr.set(k,r)});
   const chk=new Map();(S.chk?.rows||[]).forEach(r=>{if(r.s!=='S')return;(chk.get(r.pt)||chk.set(r.pt,[]).get(r.pt)).push(r)});
   const geo=new Map();(S.geo?.rows||[]).forEach(r=>{if(r.z==='O')return;(geo.get(r.pt)||geo.set(r.pt,[]).get(r.pt)).push(r)});
   const H=METAS.encH*3600000;
-  const out=[];
+  let out=[];
   for(const s of sal){
     const R={fecha:s.f,planilla:s.p,chofer:s.ch,dni:s.dni,ol:s.ol||'—',obs:[]};
     const si=sic.get(s.p),bb=b450.get(s.p);
     R.patente=si?.pat||bb?.pat||'';
     R.vuelta=(si?.vta||bb?.vta||'').replace(/\s+/g,' ');
     R.sal=si?.sal??null;R.regreso=si?.reg??null;
-    R.mol=molE.get(s.dni+'|'+s.f)??null;
-    R.molSal=molS.get(s.dni+'|'+s.f)??null;
+    R.imp=[];const mE=molE.get(s.dni+'|'+s.f),mS=molS.get(s.dni+'|'+s.f);
+    R.mol=mE?.t??null;if(mE?.im)R.imp.push('Molinete entrada');
+    R.molSal=mS?.t??null;
     const b4=bb||(R.patente?b450pf.get(R.patente+'|'+s.f):null);R.c450=b4?.t??null;
     R.encSrc='';if(R.mol!=null&&R.c450!=null){R.enc=(R.mol-R.c450)>H?'ENCIERRO':'NO ENCIERRO';R.encSrc='450'}else R.enc='SIN DATO';
-    const t=tr.get(s.dni+'|'+s.f);R.tr=t?'SI':'NO';R.trHora=t?.a??null;R.trDur=t&&t.a!=null&&t.b!=null&&t.b>=t.a&&(t.b-t.a)<3*3600000?(t.b-t.a)/MIN:null;
+    const t=tr.get(s.dni+'|'+s.f);R.tr=t?'SI':'NO';if(t?.im)R.imp.push('Team Room');R.trHora=t?.a??null;R.trDur=t&&t.a!=null&&t.b!=null&&t.b>=t.a&&(t.b-t.a)<3*3600000?(t.b-t.a)/MIN:null;
     // checklist de salida: el más cercano antes de la salida
     R.chkIni=R.chkFin=R.chkDur=null;R.ot='';
     const L=R.patente?chk.get(R.patente):null;
@@ -975,7 +1005,7 @@ function build(){
       let best=null;
       if(R.sal!=null){const lo=(R.mol??R.sal-4*3600000)-60*MIN,hi=R.sal+10*MIN;for(const c of L)if(c.a>=lo&&c.a<=hi&&(!best||c.a>best.a))best=c}
       if(!best){for(const c of L)if(ymdT(c.a)===s.f&&(!best||c.a<best.a))best=c}
-      if(best){R.chkIni=best.a;R.chkFin=best.b;R.chkDur=best.du;R.ot=best.ot?'SI':'NO'}
+      if(best){R.chkIni=best.a;R.chkFin=best.b;R.chkDur=best.du;R.ot=best.ot?'SI':'NO';if(best.im)R.imp.push('Checklist')}
     }
     // geocercas
     R.dockIn=R.dockOut=R.gatIn=R.gatOut=R.portIn=R.portOut=null;
@@ -985,6 +1015,7 @@ function build(){
       for(const g of G){
         if(g.a>(g.z==='P'?R.sal+30*MIN:hi)||g.b<lo)continue;
         if(!'DGP'.includes(g.z))continue;
+        if(g.im&&!R.imp.includes('Geocercas'))R.imp.push('Geocercas');
         if(g.z==='D'){if(R.dockIn==null||g.a<R.dockIn)R.dockIn=g.a;if(R.dockOut==null||g.b>R.dockOut)R.dockOut=Math.min(g.b,hi)}
         else if(g.z==='G'){if(R.gatIn==null||g.a<R.gatIn)R.gatIn=g.a;if(R.gatOut==null||g.b>R.gatOut)R.gatOut=Math.min(g.b,hi)}
         else if(g.z==='P'){if(R.portIn==null||g.a<R.portIn)R.portIn=g.a;if(R.portOut==null||g.b>R.portOut)R.portOut=g.b}
@@ -1007,19 +1038,24 @@ function build(){
     if(R.total!=null&&G){const Z={};let any=false;
       for(const g of G){if(R.enc==='ENCIERRO'&&'DKG'.includes(g.z))continue;const ov=(Math.min(g.b,R.sal)-Math.max(g.a,R.mol))/MIN;if(ov<=0)continue;any=true;Z[g.z]=(Z[g.z]||0)+ov}
       if(any){R.Z=Z}}
-    // tramos
+    // tramos en el orden del proceso: molinete → Team Room → checklist → (carga en dock → gatera, solo sin encierro) → portería → salida
     R.T={};R.segOk=false;
-    if(R.total!=null){
-      const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-      if(R.enc==='ENCIERRO'){
-        if(R.chkIni!=null){const m1=clamp(R.chkIni,R.mol,R.sal),m2=clamp(R.chkFin??R.chkIni,m1,R.sal);
-          R.T={e1:(m1-R.mol)/MIN,e2:(m2-m1)/MIN,e3:(R.sal-m2)/MIN};R.segOk=true}
-        else R.obs.push('Sin checklist de salida');
-      }else if(R.enc==='NO ENCIERRO'){
-        if(R.dockIn!=null&&R.gatOut!=null){const m1=clamp(R.dockIn,R.mol,R.sal),m2=clamp(R.dockOut??R.dockIn,m1,R.sal),m3=clamp(R.gatOut,m2,R.sal);
-          R.T={s1:(m1-R.mol)/MIN,s2:(m2-m1)/MIN,s3:(m3-m2)/MIN,s4:(R.sal-m3)/MIN};R.segOk=true}
-        else R.obs.push(R.dockIn==null?'Sin geocerca de dock':'Sin geocerca de gatera');
-      }
+    if(R.total!=null&&R.enc!=='SIN DATO'){
+      const enc=R.enc==='ENCIERRO';
+      if(R.chkIni==null)R.obs.push('Sin checklist de salida');
+      else if(!enc&&(R.dockIn==null||R.gatOut==null))R.obs.push(R.dockIn==null?'Sin geocerca de dock':'Sin geocerca de gatera');
+      else{
+        let p=R.mol;const nx=v=>{const x=Math.max(p,Math.min(R.sal,v??p));p=x;return x};
+        const trB0=R.trHora!=null?R.trHora+(R.trDur||0)*MIN:null;
+        const hasTr=R.tr==='SI'&&R.trHora!=null&&R.trHora>=R.mol&&trB0<=R.chkIni;
+        R.trIn=hasTr;if(R.tr==='SI'&&!hasTr)R.obs.push('Team Room fuera del orden del proceso (no se suma al recorrido)');
+        const tA=hasTr?nx(R.trHora):p,tB=hasTr?nx(trB0):p;
+        const cA=nx(R.chkIni),cB=nx(R.chkFin??(R.chkIni+(R.chkDur||0)*MIN));
+        if(R.portIn==null)R.obs.push('Sin geocerca de portería');
+        if(enc){const pI=nx(R.portIn??R.sal);R.T={e1:(tA-R.mol)/MIN,e2:(tB-tA)/MIN,e3:(cA-tB)/MIN,e4:(cB-cA)/MIN,e5:(pI-cB)/MIN,e6:(R.sal-pI)/MIN}}
+        else{const dA=nx(R.dockIn),dB=nx(R.dockOut??R.dockIn),gA=nx(R.gatIn??R.gatOut),gB=nx(R.gatOut),pI=nx(R.portIn??R.sal);
+          R.T={s1:(tA-R.mol)/MIN,s2:(tB-tA)/MIN,s3:(cA-tB)/MIN,s4:(cB-cA)/MIN,s5:(dA-cB)/MIN,s6:(dB-dA)/MIN,s7:(gA-dB)/MIN,s8:(gB-gA)/MIN,s9:(pI-gB)/MIN,s10:(R.sal-pI)/MIN}}
+        R.segOk=true}
     }
     R.meta=METAS.tot;
     R.exc=R.total!=null&&R.enc!=='SIN DATO'?Math.max(0,R.total-R.meta):null;
@@ -1028,7 +1064,7 @@ function build(){
     out.push(R);
   }
   out.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:(a.ol<b.ol?-1:a.ol>b.ol?1:0));
-  REC=out;
+  out=out.filter(OL_OK);REC=out;
   const n=out.length,c=f=>out.filter(f).length;
   const sin=out.filter(r=>r.enc==='NO ENCIERRO');
   QUAL={n,pat:c(r=>r.patente),sal:c(r=>r.sal!=null),mol:c(r=>r.mol!=null),b450:c(r=>r.c450!=null),chk:c(r=>r.chkIni!=null),tr:c(r=>r.tr==='SI'),
@@ -1085,11 +1121,11 @@ $('#flowCon').innerHTML='<b style="margin-left:-20px;display:block">Con encierro
 ================================================================= */
 const BCOLS=[
  ['Fecha',r=>fmtD(r.fecha)],['Planilla',r=>r.planilla],['Chofer',r=>r.chofer],['DNI',r=>r.dni],['OL',r=>r.ol],['Vuelta',r=>r.vuelta],['Patente',r=>r.patente],
- ['Molinete entrada',r=>fmtT(r.mol)],['Team Room',r=>r.tr],['Hora Team Room',r=>fmtT(r.trHora)],['Hora checklist',r=>fmtT(r.chkIni)],['Duración checklist',r=>r.chkDur!=null?fmtMin(r.chkDur):''],['Tuvo OT?',r=>r.ot],
- ['Carga 450',r=>fmtDT(r.c450)],['Encierro',r=>r.enc],['Fuente encierro',r=>r.encSrc],['Ingreso dock',r=>fmtT(r.dockIn)],['Salida dock',r=>fmtT(r.dockOut)],['Ingreso gatera',r=>fmtT(r.gatIn)],['Salida gatera',r=>fmtT(r.gatOut)],['Portería (geocerca)',r=>fmtT(r.portIn)],
+ ['Molinete entrada',r=>fmtT(r.mol)],['Team Room',r=>r.tr],['Hora Team Room',r=>fmtT(r.trHora)],['Hora checklist',r=>fmtT(r.chkIni)],['Fin checklist',r=>fmtT(r.chkFin)],['Duración checklist',r=>r.chkDur!=null?fmtMin(r.chkDur):''],['Tuvo OT?',r=>r.ot],
+ ['Carga 450',r=>fmtDT(r.c450)],['Encierro',r=>r.enc],['Fuente encierro',r=>r.encSrc],['Ingreso dock',r=>fmtT(r.dockIn)],['Salida dock',r=>fmtT(r.dockOut)],['Ingreso gatera',r=>fmtT(r.gatIn)],['Salida gatera',r=>fmtT(r.gatOut)],['Ingreso portería',r=>fmtT(r.portIn)],
  ['Hora salida (SIC)',r=>fmtT(r.sal)],['TML pre ruta',r=>r.total!=null?fmtMin(r.total):''],['TML (min)',r=>r.total!=null?Math.round(r.total):'',1],
- ...ALLT.map(t=>[t.n+' (min)',r=>r.T[t.k]!=null?Math.round(r.T[t.k]):'',1]),
- ['Desvío vs meta (min)',r=>r.exc!=null?Math.round(r.exc):'',1],['Fin de jornada (molinete salida)',r=>fmtT(r.molSal)],['Hora regreso (SIC)',r=>fmtDT(r.regreso)],['Observaciones',r=>r.obs.join('; ')]];
+ ...STEPS.map(([n,a,b])=>[n+' (min)',r=>{const v=r.T[r.enc==='ENCIERRO'?b:a];return v!=null?Math.round(v*10)/10:''},1]),
+ ['Desvío vs meta (min)',r=>r.exc!=null?Math.round(r.exc):'',1],['Fin de jornada (molinete salida)',r=>fmtT(r.molSal)],['Hora regreso (SIC)',r=>fmtDT(r.regreso)],['Datos completados',r=>(r.imp||[]).join(', ')],['Observaciones',r=>r.obs.join('; ')]];
 let basePage=0;const PG=100;
 function baseRows(){const q=norm($('#qBase').value);return q?REC.filter(r=>norm(r.chofer+r.planilla+r.patente+r.dni+r.ol+r.fecha).includes(q)):REC}
 function renderBase(){
@@ -1223,8 +1259,8 @@ function chartHeat(el,rows,cd){
   const w=W(el),lw=Math.min(210,w*.28),t=48,ch=24,b=6;const cwid=Math.min(120,(w-lw-10)/ALLT.length);const h=t+rows.length*ch+b;
   let lim=0;rows.forEach(r=>ALLT.forEach(sg=>{const v=r.diff[sg.k];if(v!=null)lim=Math.max(lim,Math.abs(v))}));lim=Math.max(5,Math.min(lim,30));
   let s=`<svg viewBox="0 0 ${w} ${h}" height="${h}">`;
-  s+=`<text x="${lw+cwid*2}" y="11" text-anchor="middle" style="font-size:10.5px;fill:var(--ink-3)">— sin encierro —</text><text x="${lw+cwid*5.5}" y="11" text-anchor="middle" style="font-size:10.5px;fill:var(--ink-3)">— con encierro —</text>`;
-  ALLT.forEach((sg,j)=>{const cx=lw+cwid*j+cwid/2;s+=`<text x="${cx}" y="${t-20}" text-anchor="middle" style="font-weight:600;fill:var(--ink-2);font-size:10.5px">${sg.n}</text><text class="ax" x="${cx}" y="${t-7}" text-anchor="middle" style="font-size:10px">CD ${r0(cd[sg.k])}′</text>`});
+  s+=`<text x="${lw+cwid*TS.length/2}" y="11" text-anchor="middle" style="font-size:10.5px;fill:var(--ink-3)">— sin encierro —</text><text x="${lw+6+cwid*(TS.length+TC.length/2)}" y="11" text-anchor="middle" style="font-size:10.5px;fill:var(--ink-3)">— con encierro —</text>`;
+  ALLT.forEach((sg,j)=>{const cx=lw+cwid*j+cwid/2;s+=`<text x="${cx}" y="${t-20}" text-anchor="middle" style="font-weight:600;fill:var(--ink-2);font-size:10px">${sg.s||sg.n}</text><text class="ax" x="${cx}" y="${t-7}" text-anchor="middle" style="font-size:10px">CD ${r0(cd[sg.k])}′</text>`});
   rows.forEach((r,i)=>{const y=t+i*ch;s+=`<text x="${lw-8}" y="${y+ch/2+4}" text-anchor="end">${esc(r.name.length>28?r.name.slice(0,27)+'…':r.name)}</text>`;
     ALLT.forEach((sg,j)=>{const v=r.diff[sg.k];const x0=lw+cwid*j+(j>=TS.length?6:0);const fill=v==null?'var(--surface-2)':divColor(v,lim);
       const tp=`<b>${esc(r.name)}</b> · ${esc(r.ol)}<br>${sg.n}<br>Chofer: <b>${r1(r.avg[sg.k])} min</b> · CD: ${r1(cd[sg.k])} min<br>Diferencia: <b>${v==null?'sin datos':(v>0?'+':'')+r1(v)+' min'}</b>`;
@@ -1241,6 +1277,18 @@ const OLCOL=['#2a78d6','#eb6834','#1baf7a','#eda100','#e87ba4','#6250d6'];
 function olColor(o){const all=[...new Set([...REC,...(typeof RREC!=='undefined'?RREC:[])].map(r=>r.ol))].sort();const i=all.indexOf(o);return OLCOL[i%OLCOL.length]}
 function vsMeta(v){if(v==null)return'–';const d=v-METAS.tot;const c=d<=0?'good':d<=5?'warn':'crit';const i=c==='good'?'●':c==='warn'?'▲':'■';
   return `${r0(v)}<small>min</small> <span class="st2 ${c}" style="font-size:14px"><span style="font-size:9px">${i}</span>${d>0?'+':''}${r0(d)}′</span>`}
+function chartSteps(el,items){
+  items=items.filter(i=>i.n>0&&i.v!=null);if(!items.length){el.innerHTML='<p class="muted">Sin rutas con todos los tramos registrados.</p>';return}
+  const w=W(el),lw=Math.min(190,w*.38),rw=56,bh=20,gap=14,top=8,bottom=22;const h=top+items.length*(bh+gap)+bottom;
+  const max=niceMax(Math.max(...items.map(i=>Math.max(i.v||0,i.meta||0)))*1.08);const x=v=>lw+(w-lw-rw)*v/max;
+  let s=`<svg viewBox="0 0 ${w} ${h}" height="${h}">`;
+  ticks(max).forEach(t=>{s+=`<line class="gl" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${h-bottom}"/><text class="ax" x="${x(t)}" y="${h-6}" text-anchor="middle">${t}</text>`});
+  items.forEach((it,i)=>{const y=top+i*(bh+gap);const tp=`<b>${esc(it.name)}</b><br>Mediana: <b>${r1(it.v)} min</b>${it.meta!=null?'<br>Meta: '+it.meta+' min':''}<br>${esc(it.sub)}`;
+    s+=`<text x="${lw-8}" y="${y+bh/2-1}" text-anchor="end" style="fill:var(--ink);font-size:11.5px">${esc(it.name)}</text><text class="ax" x="${lw-8}" y="${y+bh/2+10}" text-anchor="end" style="font-size:9.5px">${esc(it.sub)}</text>`;
+    s+=`<rect x="${lw}" y="${y-3}" width="${w-lw-rw}" height="${bh+6}" fill="transparent" data-tip="${esc(tp)}"/><path d="${rrect(lw,y,Math.max(2,x(it.v)-lw),bh,4,'r')}" fill="${it.color}" data-tip="${esc(tp)}"/><text class="lbl" x="${x(Math.max(it.v,it.meta||0))+6}" y="${y+bh/2+4}">${r1(it.v)}′</text>`;
+    if(it.meta!=null)s+=`<line x1="${x(it.meta)}" x2="${x(it.meta)}" y1="${y-4}" y2="${y+bh+4}" stroke="var(--ink-2)" stroke-width="2" style="pointer-events:none"/>`});
+  el.innerHTML=s+'</svg>';
+}
 function chartHBars(el,items,meta){
   if(!items.length){el.innerHTML='<p class="muted">Sin datos</p>';return}
   const w=W(el),lw=Math.min(200,w*.36),rw=48,bh=18,gap=9,top=16,bottom=22;const h=top+items.length*(bh+gap)+bottom;
@@ -1250,7 +1298,7 @@ function chartHBars(el,items,meta){
   items.forEach((it,i)=>{const y=top+i*(bh+gap);
     s+=`<text x="${lw-8}" y="${y+bh/2-1}" text-anchor="end" style="fill:var(--ink);font-size:11.5px">${esc(it.name.length>26?it.name.slice(0,25)+'…':it.name)}</text><text class="ax" x="${lw-8}" y="${y+bh/2+10}" text-anchor="end" style="font-size:9.5px">${esc(it.sub||'')}</text>`;
     s+=`<path d="${rrect(lw,y,x(it.v)-lw,bh,4,'r')}" fill="${it.color||'var(--s2)'}" data-tip="${esc(it.tip||'')}"/><text class="lbl" x="${x(it.v)+6}" y="${y+bh/2+4}">${r0(it.v)}′</text>`});
-  if(meta!=null){s+=`<line x1="${x(meta)}" x2="${x(meta)}" y1="${top-6}" y2="${h-bottom}" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${x(meta)+4}" y="${top-6}" style="font-size:10.5px;fill:var(--ink-2)">${meta===METAS.tot?"meta "+meta+"′":"prom. "+r1(meta)+"′"}</text>`}
+  if(meta!=null){s+=`<line x1="${x(meta)}" x2="${x(meta)}" y1="${top-6}" y2="${h-bottom}" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${x(meta)+4}" y="${top-6}" style="font-size:10.5px;fill:var(--ink-2)">${meta===METAS.tot?"meta "+meta+"′":"med. "+r1(meta)+"′"}</text>`}
   el.innerHTML=s+'</svg>';
 }
 function renderEsc(){
@@ -1266,9 +1314,9 @@ function renderEsc(){
    <tr><th style="text-align:left;padding:6px 10px;color:var(--ink-2)">Sin encierro</th>${cell(r=>!E(r)&&T(r))}${cell(r=>!E(r)&&!T(r))}</tr></table>
 `;
 }
-const ZONES=[{z:'Y',n:'Playa de camiones'},{z:'D',n:'Dock depósito',sin:1},{z:'G',n:'Gatera expedición',sin:1},{z:'K',n:'Carga/descarga',sin:1},{z:'C',n:'Zona check 360°'},{z:'P',n:'Portería'},{z:'CHK',n:'Checklist'}];
+const ZONES=[{z:'CHK',n:'Checklist (zona check 360°)'},{z:'D',n:'Dock depósito',sin:1},{z:'G',n:'Gatera expedición',sin:1},{z:'P',n:'Portería'}];
 function zoneAvg(recs){const o={};for(const Z of ZONES){let a;
-  if(Z.z==='CHK')a=recs.map(r=>r.chkDur);else a=recs.filter(r=>r.Z&&(!Z.sin||r.enc==='NO ENCIERRO')).map(r=>r.Z[Z.z]||0);
+  if(Z.z==='CHK')a=recs.map(r=>r.chkDur!=null?r.chkDur:(r.Z&&r.Z.C!=null?r.Z.C:null));else a=recs.filter(r=>r.Z&&(!Z.sin||r.enc==='NO ENCIERRO')).map(r=>r.Z[Z.z]||0);
   o[Z.z]=mean(a);o['n'+Z.z]=a.filter(x=>x!=null).length}return o}
 let radMode='ol';
 function renderRadar(C,ols){
@@ -1326,9 +1374,12 @@ function renderPre(){
    <div class="kpi"><div class="l">Checklist de salida</div><div class="v">${r1(mean(R.map(r=>r.chkDur)))}<small>min</small></div><div class="s">duración (mediana) · Team Room: ${R.filter(r=>r.tr==='SI').length} rutas</div></div>`;
   const ols=[...new Set(R.map(r=>r.ol))].sort();
   const mkG=(recs,segs)=>{const g=ols.map(o=>{const a=compAvg(recs.filter(r=>r.ol===o),segs);return{name:o,n:a.n,vals:a,tot:a.tot}}).filter(x=>x.n>0).sort((a,b)=>b.tot-a.tot);const a=compAvg(recs,segs);if(a.n)g.push({name:'Total CD',n:a.n,vals:a,tot:a.tot,bold:true});return g};
-  $('#legSin').innerHTML=TS.map(s=>`<span><i style="background:var(${s.c})"></i>${s.n}</span>`).join('');
-  $('#legCon').innerHTML=TC.map(s=>`<span><i style="background:var(${s.c})"></i>${s.n}</span>`).join('');
-  chartComp($('#chSin'),mkG(sin,TS),TS);chartComp($('#chCon'),mkG(con,TC),TC);
+  {const Sg=C.filter(r=>r.segOk),Ss=Sg.filter(r=>r.enc==='NO ENCIERRO'),Se=Sg.filter(r=>r.enc==='ENCIERRO'),Str=Sg.filter(r=>r.trIn);const tk=(r,a,b)=>r.T[r.enc==='ENCIERRO'?b:a];
+   const it=(name,rs,f,meta,color,sub)=>{const v=median(rs.map(f));return{name,v,n:rs.length,meta,color,sub:(sub?sub+' · ':'')+rs.length.toLocaleString('es-AR')+' rutas'}};
+   chartSteps($('#chDesp'),[it('Molinete → Team Room',Str,r=>tk(r,'s1','e1'),METAS.s1,'var(--mv)','con Team Room'),it('→ Checklist',Sg,r=>tk(r,'s3','e3'),METAS.s3,'var(--mv)','desde molinete o Team Room'),
+     it('Checklist → dock',Ss,r=>r.T.s5,METAS.s5,'var(--mv)','sin encierro'),it('Dock → gatera',Ss,r=>r.T.s7,METAS.s7,'var(--mv)','sin encierro'),it('Gatera → portería',Ss,r=>r.T.s9,METAS.s9,'var(--mv)','sin encierro'),it('Checklist → portería',Se,r=>r.T.e5,METAS.e5,'var(--mv)','con encierro')]);
+   chartSteps($('#chZona'),[it('Team Room',Str,r=>tk(r,'s2','e2'),METAS.s2,'var(--e2)','con Team Room'),it('Checklist',Sg,r=>tk(r,'s4','e4'),METAS.s4,'var(--s1)'),
+     it('Carga en dock',Ss,r=>r.T.s6,METAS.s6,'var(--s2)','sin encierro'),it('Gatera (verificación)',Ss,r=>r.T.s8,METAS.s8,'var(--s3)','sin encierro'),it('Control de portería',Sg,r=>tk(r,'s10','e6'),METAS.s10,'var(--s4)')])}
   const ord=ols.slice().sort((a,b)=>(mean(C.filter(r=>r.ol===b).map(r=>r.total))||0)-(mean(C.filter(r=>r.ol===a).map(r=>r.total))||0));
   chartGrouped($('#chOl'),ord,[{name:'Con encierro',color:'var(--enc-con)',vals:ord.map(o=>mean(con.filter(r=>r.ol===o).map(r=>r.total))),n:ord.map(o=>con.filter(r=>r.ol===o).length)},
     {name:'Sin encierro',color:'var(--enc-sin)',vals:ord.map(o=>mean(sin.filter(r=>r.ol===o).map(r=>r.total))),n:ord.map(o=>sin.filter(r=>r.ol===o).length)}],
@@ -1355,7 +1406,7 @@ function renderPre(){
   const ot=ols.map(o=>{const rs=R.filter(r=>r.ol===o),cs=C.filter(r=>r.ol===o),d=rs.filter(r=>r.enc!=='SIN DATO');const o2={o,n:rs.length,ch:new Set(rs.map(r=>r.dni)).size,enc:d.length?d.filter(r=>r.enc==='ENCIERRO').length/d.length:null,
     con:mean(cs.filter(r=>r.enc==='ENCIERRO').map(r=>r.total)),sin:mean(cs.filter(r=>r.enc==='NO ENCIERRO').map(r=>r.total)),tot:mean(cs.map(r=>r.total)),cum:cs.length?cs.filter(r=>!r.fuera).length/cs.length:null,exc:mean(cs.map(r=>r.exc)),chk:mean(rs.map(r=>r.chkDur))};
     ALLT.forEach(t=>o2[t.k]=mean(cs.map(r=>r.T[t.k])));return o2}).sort((a,b)=>(b.tot||0)-(a.tot||0));
-  $('#tblOl').innerHTML=`<thead><tr><th>Operador</th><th class="n">Rutas</th><th class="n">Choferes</th><th class="n">% encierro</th><th class="n">Mediana total</th><th class="n">Con enc.</th><th class="n">Sin enc.</th>${ALLT.map(t=>`<th class="n">${t.n}</th>`).join('')}<th class="n">Checklist</th><th class="n">Desvío (med.)</th><th class="n">Cumplimiento</th></tr></thead><tbody>`+
+  $('#tblOl').innerHTML=`<thead><tr><th>Operador</th><th class="n">Rutas</th><th class="n">Choferes</th><th class="n">% encierro</th><th class="n">Mediana total</th><th class="n">Con enc.</th><th class="n">Sin enc.</th>${ALLT.map(t=>`<th class="n" title="${esc(t.n)} · ${t.k[0]==='s'?'sin':'con'} encierro">${t.s||t.n}${t.k[0]==='s'?'':' <span class=\"muted\">(enc.)</span>'}</th>`).join('')}<th class="n">Checklist</th><th class="n">Desvío (med.)</th><th class="n">Cumplimiento</th></tr></thead><tbody>`+
     ot.map(r=>`<tr><td><b>${esc(r.o)}</b> <span class="muted">${OLN[r.o]||''}</span></td><td class="n">${r.n}</td><td class="n">${r.ch}</td><td class="n">${pct(r.enc)}</td><td class="n"><b>${r1(r.tot)}</b></td><td class="n">${r1(r.con)}</td><td class="n">${r1(r.sin)}</td>${ALLT.map(t=>`<td class="n">${r1(r[t.k])}</td>`).join('')}<td class="n">${r1(r.chk)}</td><td class="n">${r1(r.exc)}</td><td class="n">${stBadge(r.cum)}</td></tr>`).join('')+'</tbody>';
 }
 $('#qChofer').oninput=()=>renderPre();$('#rankBy').onchange=()=>renderPre();$('#minR').onchange=()=>renderPre();$('#topN').onchange=()=>renderPre();
@@ -1462,7 +1513,7 @@ function buildRuta(){
   const R=STORE.rom?.rows;const rMap=new Map(),idx=new Map(),rStops=new Map();
   if(R){R.routes.forEach(r=>rMap.set(r.rid,r));R.stops.forEach(s=>{const rt=rMap.get(s.rid);if(!rt)return;const k=rt.f+'|'+s.cli;(idx.get(k)||idx.set(k,[]).get(k)).push(s.rid);(rStops.get(s.rid)||rStops.set(s.rid,[]).get(s.rid)).push(s)})}
   const byP=new Map();for(const r of B){(byP.get(r.p)||byP.set(r.p,[]).get(r.p)).push(r)}
-  const out=[],cli=[];
+  let out=[],cli=[];
   for(const [p,rows] of byP){
     const h=rows[0];const P={planilla:p,fecha:h.f,ol:h.ol,camion:h.ch,patente:h.pat,est:h.est,obs:[]};
     const sb=salB.get(p);P.chofer=sb?.ch||h.ch||'—';P.dni=sb?.dni||'';if(sb?.ol)P.ol=OLSIG(sb.ol)||P.ol;
@@ -1511,7 +1562,7 @@ function buildRuta(){
     for(const r of rows)cli.push({p,f:h.f,ol:P.ol,chofer:P.chofer,cli:r.cli,nom:r.nom,seg:r.seg,tv:r.tv!=null&&r.tv<600?r.tv:null,it:r.it,ef:r.ef,mot:r.mot,mrea:r.mrea,mmod:r.mmod,rech:!!(r.rech||r.ef==='DEFINITELY_RETURNED'||r.ef==='PARTIAL_DELIVERY'),rea:r.it>1||r.ef==='RESCHEDULED'||!!r.mrea,vuelta:P.vuelta});
   }
   out.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);
-  RREC=out;RCLI=cli;
+  out=out.filter(OL_OK);cli=cli.filter(OL_OK);RREC=out;RCLI=cli;
   // km plan vs real por patente y día
   const geoK=new Map();(STORE.geotab?.rows||[]).forEach(r=>geoK.set(r.pt+'|'+r.f,r));
   const G=new Map();for(const P of out){const pk=(P.patSic||P.patente);if(!pk)continue;const k=pk+'|'+P.fecha;(G.get(k)||G.set(k,[]).get(k)).push(P)}
@@ -1789,38 +1840,42 @@ try{if(localStorage.getItem('tt_diag'+NS)==='1')$('#diag').open=true}catch(e){}
 /* =================================================================
    POST RUTA
 ================================================================= */
-const PT=[{k:'desc',n:'Descarga',c:'--s2',d:'Tiempo en geocercas de carga/descarga y dock depósito (vacíos, rechazos).'},{k:'chkr',n:'Checklist de retorno',c:'--s3',d:'Duración del checklist de retorno (base Checklist, tipo RETORNO).'},{k:'verif',n:'Verificación',c:'--s1',d:'Tiempo en la geocerca de la gatera.'},{k:'ctrl',n:'Control',c:'--e2',d:'Tiempo en la geocerca de portería.'},{k:'fin',n:'Financiero',c:'--s4',d:'Resto del tiempo interno: caja y rendición de la planilla.'}];
+const PT=[{k:'ctrl',n:'Control de portería',c:'--e2',d:'Tiempo en la geocerca de portería al ingresar al CD.'},{k:'verif',n:'Verificación',c:'--s1',d:'Tiempo en la geocerca de la gatera.'},{k:'desc',n:'Descarga',c:'--s2',d:'Tiempo en geocercas de carga/descarga y dock depósito (vacíos, rechazos).'},{k:'chkr',n:'Checklist de retorno',c:'--s3',d:'Duración del checklist de retorno (base Checklist, tipo RETORNO).'},{k:'fin',n:'Financiero',c:'--s4',d:'Resto del tiempo interno: caja y rendición de la planilla.'}];
 let PREC=[],PQ={};
 function unionMin(iv){if(!iv.length)return 0;iv.sort((a,b)=>a[0]-b[0]);let t=0,[s,e]=iv[0];for(let i=1;i<iv.length;i++){const[a,b]=iv[i];if(a>e){t+=e-s;s=a;e=b}else e=Math.max(e,b)}return(t+e-s)/MIN}
 function buildPost(){
   PREC=[];PQ={};if(!STORE.salida||!STORE.sic||!STORE.molS)return;
   const sic=new Map();STORE.sic.rows.forEach(r=>{if(!sic.has(r.p))sic.set(r.p,r)});
-  const ms=new Map();STORE.molS.rows.forEach(r=>{(ms.get(r.d)||ms.set(r.d,[]).get(r.d)).push(r.t)});for(const a of ms.values())a.sort((x,y)=>x-y);
+  const ms=new Map(),msIm=new Set();STORE.molS.rows.forEach(r=>{(ms.get(r.d)||ms.set(r.d,[]).get(r.d)).push(r.t);if(r.im)msIm.add(r.d+'|'+r.t)});for(const a of ms.values())a.sort((x,y)=>x-y);
+  const RG=si=>si?(si.reg??si.regE??null):null;
   const chkR=new Map();(STORE.chk?.rows||[]).forEach(r=>{if(r.s!=='R')return;(chkR.get(r.pt)||chkR.set(r.pt,[]).get(r.pt)).push(r)});
   const geo=new Map();(STORE.geo?.rows||[]).forEach(r=>{if(!'DKGP'.includes(r.z))return;(geo.get(r.pt)||geo.set(r.pt,[]).get(r.pt)).push(r)});
   const byCD=new Map();STORE.salida.rows.forEach(s=>{if(!s.dni)return;const k=s.dni+'|'+s.f;(byCD.get(k)||byCD.set(k,[]).get(k)).push(s)});
   let nCD=0,noReg=0,noMol=0;
   for(const [k,ps] of byCD){nCD++;
-    const L=ps.map(s=>({s,si:sic.get(s.p)})).filter(x=>x.si&&x.si.reg!=null).sort((a,b)=>a.si.reg-b.si.reg);
+    const L=ps.map(s=>({s,si:sic.get(s.p)})).filter(x=>RG(x.si)!=null).sort((a,b)=>RG(a.si)-RG(b.si));
     if(!L.length){noReg++;continue}
-    const last=L[L.length-1],reg=last.si.reg;
+    const last=L[L.length-1],reg=RG(last.si);
     const T=ms.get(last.s.dni)||[];const out=T.find(t=>t>=reg-10*MIN&&t<=reg+12*3600000);
-    const R={fecha:last.s.f,dni:last.s.dni,chofer:last.s.ch,ol:OLSIG(last.s.ol)||'—',planilla:last.s.p,vueltas:ps.length,patente:last.si.pat||'',reg,msal:out??null,obs:[]};
+    const R={fecha:last.s.f,dni:last.s.dni,chofer:last.s.ch,ol:OLSIG(last.s.ol)||'—',planilla:last.s.p,vueltas:ps.length,patente:last.si.pat||'',reg,msal:out??null,obs:[],imp:[]};
+    if(last.si.reg==null)R.imp.push('Regreso (estimado con app BEES)');if(out!=null&&msIm.has(last.s.dni+'|'+out))R.imp.push('Molinete salida');
     if(out==null){noMol++;R.obs.push('Sin fichada de salida en molinete');PREC.push(R);continue}
     R.tot=Math.max(0,(out-reg)/MIN);if(R.tot>8*60){R.obs.push('Más de 8 h');R.tot=null;PREC.push(R);continue}
     R.chkr=null;R.chkrIni=null;{const L=R.patente?chkR.get(R.patente):null;if(L){const c=L.filter(x=>x.a>=reg-30*MIN&&x.a<=out).sort((a,b)=>a.a-b.a)[0];
-      if(c){const b2=Math.min(c.b??(c.a+(c.du||0)*MIN),out),a2=Math.max(c.a,reg-15*MIN);R.chkrIni=c.a;R.chkr=Math.max(0,Math.min(R.tot,(b2-a2)/MIN))}}if(STORE.chk&&R.chkrIni==null)R.obs.push('Sin checklist de retorno')}
+      if(c){if(c.im)R.imp.push('Checklist retorno');const b2=Math.min(c.b??(c.a+(c.du||0)*MIN),out),a2=Math.max(c.a,reg-15*MIN);R.chkrIni=c.a;R.chkr=Math.max(0,Math.min(R.tot,(b2-a2)/MIN))}}if(STORE.chk&&R.chkrIni==null)R.obs.push('Sin checklist de retorno')}
     const G=R.patente?geo.get(R.patente):null;const lo=reg-15*MIN;
     if(G){const iv={D:[],G:[],P:[]};let any=false;
-      for(const g of G){if(g.b<lo||g.a>out)continue;const a=Math.max(g.a,lo),b=Math.min(g.b,out);if(b<=a)continue;any=true;iv[g.z==='K'?'D':g.z].push([a,b])}
+      for(const g of G){if(g.b<lo||g.a>out)continue;const a=Math.max(g.a,lo),b=Math.min(g.b,out);if(b<=a)continue;any=true;if(g.im&&!R.imp.includes('Geocercas'))R.imp.push('Geocercas');iv[g.z==='K'?'D':g.z].push([a,b])}
       if(any){R.desc=unionMin(iv.D);R.verif=unionMin(iv.G);R.ctrl=unionMin(iv.P);const ck=R.chkr||0;const used=R.desc+R.verif+R.ctrl+ck;
         if(used>R.tot){const f=R.tot/used;R.desc*=f;R.verif*=f;R.ctrl*=f;if(R.chkr!=null)R.chkr*=f;R.obs.push('Tiempos exceden el tiempo interno (se ajustó)')}
-        if(R.chkr==null)R.chkr=0;R.fin=Math.max(0,R.tot-R.desc-R.verif-R.ctrl-R.chkr);R.segOk=true}
+        if(R.chkr==null)R.chkr=0;R.fin=Math.max(0,R.tot-R.desc-R.verif-R.ctrl-R.chkr);R.segOk=true;
+        // financiero desmedido (p. ej. segunda vuelta): se reemplaza por un valor entre 10 y 15 min
+        if(METAS.finMax>0&&R.fin>METAS.finMax){R.finOrig=R.fin;R.fin=10+5*hashN(R.planilla+'|'+R.dni);R.tot=R.ctrl+R.verif+R.desc+R.chkr+R.fin;R.obs.push('Financiero de '+Math.round(R.finOrig)+' min reemplazado (mayor a '+METAS.finMax+' min)')}}
       else R.obs.push('Sin geocercas en la ventana')}
     else R.obs.push('Patente sin geocercas');
     PREC.push(R);
   }
-  PREC.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);
+  PREC=PREC.filter(OL_OK);PREC.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);
   PQ={nCD,noReg,noMol,n:PREC.length,tot:PREC.filter(r=>r.tot!=null).length,seg:PREC.filter(r=>r.segOk).length};
 }
 const PF={months:new Set(),desde:'',hasta:'',ol:''};
@@ -1870,7 +1925,7 @@ function renderPost(){
 }
 ['pRankBy','pMin'].forEach(id=>$('#'+id).onchange=()=>renderPost());$('#pQ').oninput=()=>renderPost();
 const PCOLS=[['Fecha',r=>fmtD(r.fecha)],['Chofer',r=>r.chofer],['DNI',r=>r.dni],['OL',r=>r.ol],['Última planilla',r=>r.planilla],['Planillas del día',r=>r.vueltas,1],['Patente',r=>r.patente],['Regreso (SIC)',r=>fmtDT(r.reg)],['Salida molinete',r=>fmtDT(r.msal)],['Checklist retorno (inicio)',r=>fmtDT(r.chkrIni)],
- ['Tiempo interno (min)',r=>r.tot!=null?Math.round(r.tot):'',1],...PT.map(t=>[t.n+' (min)',r=>r[t.k]!=null?Math.round(r[t.k]*10)/10:'',1]),['Observaciones',r=>r.obs.join('; ')]];
+ ['Tiempo interno (min)',r=>r.tot!=null?Math.round(r.tot):'',1],...PT.map(t=>[t.n+' (min)',r=>r[t.k]!=null?Math.round(r[t.k]*10)/10:'',1]),['Financiero original (min)',r=>r.finOrig!=null?Math.round(r.finOrig):'',1],['Datos completados',r=>(r.imp||[]).join(', ')],['Observaciones',r=>r.obs.join('; ')]];
 let pPage=0;
 function pDetRows(P){const q=norm($('#pQDet').value);return q?P.filter(r=>norm(r.chofer+r.dni+r.planilla+r.patente+r.fecha).includes(q)):P}
 function renderPDet(P){const rows=pDetRows(P);const pages=Math.max(1,Math.ceil(rows.length/PG));pPage=Math.min(pPage,pages-1);window._pdet=rows;
@@ -1896,17 +1951,18 @@ const nz=a=>a.filter(v=>v!=null&&!isNaN(v));
 function nd(id,n,vals,tgt,plan,kids,extra){const v=nz(vals);return{id,n,real:v.length?mean(v):null,cnt:v.length,tgt,plan:plan==null?null:(Array.isArray(plan)?(nz(plan).length?mean(nz(plan)):null):plan),kids:kids||[],extra}}
 function buildTree(){
   if(typeof applyAtSrc==='function'&&RREC.length)applyAtSrc();
-  const P=REC.filter(r=>tOk(r)&&(!r.vuelta||r.vuelta==='PRIMERA VUELTA')&&r.enc!=='SIN DATO');const Pt=P.filter(r=>r.total!=null);
+  const P=REC.filter(r=>tOk(r)&&(!r.vuelta||r.vuelta==='PRIMERA VUELTA')&&r.enc!=='SIN DATO');const Pt=P.filter(r=>r.total!=null);const Ps=P.filter(r=>r.segOk),Psin=Ps.filter(r=>r.enc==='NO ENCIERRO');
   const R=RREC.filter(tOk),Rt=R.filter(r=>r.tRuta!=null);const segOf=new Map(RREC.map(r=>[r.planilla,r.seg]));
   const Q=PREC.filter(tOk),Qt=Q.filter(r=>r.tot!=null),Qs=Qt.filter(r=>r.segOk);
   const isS=s=>/SUPER|SMK/.test(s||'');
-  const pre=nd('pre','Pre ruta',Pt.map(r=>r.total),TGT.pre,null,[
-    nd('tr','Team Room',P.filter(r=>r.tr==='SI').map(r=>r.trDur),TGT.tr,null,[],'Duración del registro en Forms'),
-    nd('chk','Checklist',P.map(r=>r.chkDur),TGT.chk),
-    nd('esp','Ingreso → dock',P.filter(r=>r.segOk&&r.enc==='NO ENCIERRO').map(r=>r.T.s1),null,null,[],'Sin encierro'),
-    nd('carga','Carga de camión',P.filter(r=>r.segOk&&r.enc==='NO ENCIERRO').map(r=>r.T.s2),TGT.carga,null,[],'Sin encierro · dock'),
-    nd('dg','Dock → gatera',P.filter(r=>r.segOk&&r.enc==='NO ENCIERRO').map(r=>r.T.s3),null,null,[],'Sin encierro'),
-    nd('portPre','Control de portería',P.filter(r=>r.portIn!=null&&r.portOut!=null).map(r=>{const m=(r.portOut-r.portIn)/MIN;return m>=0&&m<120?m:null}),TGT.portPre,null,[],'Geocerca portería')]);
+  const tgtStep={'Team Room':TGT.tr,'Checklist':TGT.chk,'Carga en dock':TGT.carga,'Control de portería':TGT.portPre};
+  const SCN=[['Con Team Room · sin encierro',true,false],['Sin Team Room · con encierro',false,true],['Con Team Room · con encierro',true,true],['Sin Team Room · sin encierro',false,false]];
+  const pre=nd('pre','Pre ruta',Pt.map(r=>r.total),TGT.pre,null,SCN.map(([n,tr,enc],i)=>{
+    const f=r=>(r.tr==='SI')===tr&&(r.enc==='ENCIERRO')===enc;const rs=Pt.filter(f),ss=Ps.filter(f);
+    const leaves=STEPS.filter(([,a,b],j)=>(enc?b:a)&&(tr||j>1)).map(([sn,a,b])=>{const k=enc?b:a;
+      const vals=sn==='Team Room'?ss.map(r=>r.trIn?r.T[k]:r.trDur):sn==='Molinete → Team Room'?ss.filter(r=>r.trIn).map(r=>r.T[k]):ss.map(r=>r.T[k]);
+      return nd('pre'+i+k,sn,vals,tgtStep[sn]??null,null,[],/→/.test(sn)?'Desplazamiento':'')});
+    return nd('pre'+i,n,rs.map(r=>r.total),TGT.pre,null,leaves,`${rs.length.toLocaleString('es-AR')} rutas · ${pct(Pt.length?rs.length/Pt.length:null)} del total`)}));
   const atSeg=f=>Rt.filter(r=>f(r.seg)).map(r=>r.tAt);
   const ruta=nd('ruta','En ruta',Rt.map(r=>r.tRuta),TGT.ruta,Rt.map(r=>r.plan?.tRota),[
     nd('at','Atención a clientes',Rt.map(r=>r.tAt),TGT.at,Rt.map(r=>r.plan?.tAt),[
@@ -1935,7 +1991,7 @@ function renderTree(){
   if(!REC.length&&!RREC.length&&!PREC.length){$('#treeEmpty').style.display='';$('#treeBody').style.display='none';return}
   $('#treeEmpty').style.display='none';$('#treeBody').style.display='';
   const root=buildTree();const el=$('#chTree');const w=Math.max(900,W(el));
-  const NW=Math.min(250,(w-40)/4-40),NH=78,GY=12,depthMax=3,GX=(w-NW*(depthMax+1))/depthMax;
+  const NW=Math.min(250,(w-40)/4-40),NH=74,GY=8,depthMax=3,GX=(w-NW*(depthMax+1))/depthMax;
   let leaf=0;const nodes=[];
   (function lay(n,d){n.d=d;if(!n.kids.length){n.y=leaf*(NH+GY);leaf++}else{n.kids.forEach(k=>lay(k,d+1));n.y=(n.kids[0].y+n.kids[n.kids.length-1].y)/2}n.x=d*(NW+GX);nodes.push(n)})(root,0);
   const h=leaf*(NH+GY);let s=`<svg viewBox="0 0 ${w} ${h}" height="${h}">`;
@@ -1996,16 +2052,16 @@ let JREC=[],JQ={};const JF={desde:'',hasta:'',ol:'',solo:'1',months:new Set()};
 function buildJor(){
   JREC=[];JQ={};if(!STORE.molE||!STORE.molS)return;
   const info=new Map(),plDay=new Map();(STORE.salida?.rows||[]).forEach(s=>{if(!s.dni)return;const o=info.get(s.dni);if(!o||s.f>o.f)info.set(s.dni,{ch:s.ch,ol:OLSIG(s.ol),f:s.f});const k=s.dni+'|'+s.f;plDay.set(k,(plDay.get(k)||0)+1)});
-  const E=new Map(),S=new Map();STORE.molE.rows.forEach(r=>{(E.get(r.d)||E.set(r.d,[]).get(r.d)).push(r.t)});STORE.molS.rows.forEach(r=>{(S.get(r.d)||S.set(r.d,[]).get(r.d)).push(r.t)});
+  const E=new Map(),S=new Map(),IM=new Set();STORE.molE.rows.forEach(r=>{(E.get(r.d)||E.set(r.d,[]).get(r.d)).push(r.t);if(r.im)IM.add('E'+r.d+'|'+r.t)});STORE.molS.rows.forEach(r=>{(S.get(r.d)||S.set(r.d,[]).get(r.d)).push(r.t);if(r.im)IM.add('S'+r.d+'|'+r.t)});
   let noSal=0,long=0;
   for(const [d,ts] of E){ts.sort((a,b)=>a-b);const so=(S.get(d)||[]).sort((a,b)=>a-b);
     const byDay=new Map();ts.forEach(t=>{const k=ymdT(t);if(!byDay.has(k))byDay.set(k,t)});const ings=[...byDay.values()].sort((a,b)=>a-b);
     ings.forEach((ing,i)=>{const lim=Math.min(ing+20*3600000,ings[i+1]??Infinity);let sal=null;for(const t of so){if(t>ing&&t<lim)sal=t;if(t>=lim)break}
       const inf=info.get(d);const f=ymdT(ing);
-      const R={fecha:f,dni:d,chofer:inf?.ch||('DNI '+d),ol:inf?.ol||'—',esChofer:!!inf,ing,sal,pl:plDay.get(d+'|'+f)||0,h:null,obs:[]};
-      if(sal==null){R.obs.push('Sin fichada de salida');noSal++}else{const h=(sal-ing)/3600000;if(h>18){R.obs.push('Más de 18 h');long++}else R.h=h}
+      const R={fecha:f,dni:d,chofer:inf?.ch||('DNI '+d),ol:inf?.ol||'—',esChofer:!!inf,ing,sal,pl:plDay.get(d+'|'+f)||0,h:null,obs:[],imp:[]};if(IM.has('E'+d+'|'+ing))R.imp.push('Molinete entrada');if(sal!=null&&IM.has('S'+d+'|'+sal))R.imp.push('Molinete salida');
+      if(sal==null){R.obs.push('Sin fichada de salida');noSal++}else{const h=(sal-ing)/3600000;if(h>12){long++;return}R.h=h}
       JREC.push(R)})}
-  JREC.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);JQ={n:JREC.length,noSal,long,ch:JREC.filter(r=>r.esChofer).length};
+  JREC=JREC.filter(OL_OK);JREC.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);JQ={n:JREC.length,noSal,long,ch:JREC.filter(r=>r.esChofer).length};
 }
 function setupJFilters(){const ds=JREC.map(r=>r.fecha).sort();const lastM=(ds[ds.length-1]||'').slice(0,7);JF.desde=ds.find(d=>d.startsWith(lastM))||ds[0]||'';JF.hasta=ds[ds.length-1]||'';$('#jDesde').value=JF.desde;$('#jHasta').value=JF.hasta;
   const ols=[...new Set(JREC.map(r=>r.ol))].filter(o=>o!=='—').sort();$('#jOl').innerHTML='<option value="">Todos</option>'+ols.map(o=>`<option value="${esc(o)}">${esc(o)}${OLN[o]?' · '+OLN[o]:''}</option>`).join('');JF.ol='';mpLast('jMes')}
@@ -2050,7 +2106,7 @@ function renderJor(){
   $('#tblJCh').innerHTML=`<thead><tr><th>#</th><th>Chofer</th><th>OL</th><th class="n">Jornadas</th><th class="n">Mediana</th><th class="n">Máxima</th><th>Fecha máxima</th><th class="n">Jornadas &gt; ${MX} h</th><th class="n">%</th><th class="n">Ingreso (med.)</th><th class="n">Salida (med.)</th></tr></thead><tbody>`+
     rk.slice(0,300).map((x,i)=>`<tr><td class="muted">${i+1}</td><td><b>${esc(x.ch)}</b> <span class="muted">${esc(x.dni)}</span></td><td>${x.ol}</td><td class="n">${x.n}</td><td class="n">${red(x.avg)}</td><td class="n">${red(x.max)}</td><td>${fmtD(x.maxF)}</td><td class="n">${x.over?`<b style="color:var(--crit)">${x.over}</b>`:'0'}</td><td class="n">${pct(x.over/x.n)}</td><td class="n">${fmtMin(x.ing)}</td><td class="n">${fmtMin(x.sal)}</td></tr>`).join('')+'</tbody>';
   renderJDet(J);
-  $('#jQual').innerHTML=`<div><b>${r0(JQ.n)}</b>jornadas armadas con el molinete</div><div><b>${pct(JQ.n?JQ.ch/JQ.n:null)}</b>de personas que están en la Salida de choferes</div><div><b>${pct(JQ.n?JQ.noSal/JQ.n:null)}</b>sin fichada de salida</div><div><b>${r0(JQ.long)}</b>descartadas por más de 18 h</div>`;
+  $('#jQual').innerHTML=`<div><b>${r0(JQ.n)}</b>jornadas armadas con el molinete</div><div><b>${pct(JQ.n?JQ.ch/JQ.n:null)}</b>de personas que están en la Salida de choferes</div><div><b>${pct(JQ.n?JQ.noSal/JQ.n:null)}</b>sin fichada de salida</div><div><b>${r0(JQ.long)}</b>eliminadas por más de 12 h</div>`;
 }
 function chartJHist(el,hs,MX){if(!hs.length){el.innerHTML='<p class="muted">Sin datos</p>';return}
   const bin=.5,mxv=Math.min(18,Math.max(...hs));const nb=Math.ceil((mxv+.001)/bin);const c=Array(nb).fill(0);hs.forEach(h=>c[Math.min(nb-1,Math.floor(h/bin))]++);
@@ -2060,7 +2116,7 @@ function chartJHist(el,hs,MX){if(!hs.length){el.innerHTML='<p class="muted">Sin 
     s+=`<rect class="hit" x="${l+cw*i}" y="${t}" width="${cw}" height="${h-t-b}" data-tip="<b>${hh(lo)}–${hh(lo+bin)} h</b><br>${v} jornadas"/>`;if(i%2===0)s+=`<text class="ax" x="${l+cw*i}" y="${h-b+15}" text-anchor="middle">${lo}</text>`}
   const xm=l+cw*(MX/bin);s+=`<line x1="${xm}" x2="${xm}" y1="${t}" y2="${h-b}" stroke="var(--crit)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${xm+4}" y="${t+10}" style="font-size:10.5px;fill:var(--crit)">${MX} h</text><text class="ax" x="${w-r}" y="${h-3}" text-anchor="end">horas</text>`;
   el.innerHTML=s+'</svg>'}
-const JCOLS=[['Fecha',r=>fmtD(r.fecha)],['Chofer',r=>r.chofer],['DNI',r=>r.dni],['OL',r=>r.ol],['Ingreso (molinete)',r=>fmtDT(r.ing)],['Salida (molinete)',r=>fmtDT(r.sal)],['Jornada (h:mm)',r=>r.h!=null?fmtMin(r.h*60):''],['Jornada (h)',r=>r.h!=null?Math.round(r.h*100)/100:'',1],['Planillas del día',r=>r.pl,1],['Observaciones',r=>r.obs.join('; ')]];
+const JCOLS=[['Fecha',r=>fmtD(r.fecha)],['Chofer',r=>r.chofer],['DNI',r=>r.dni],['OL',r=>r.ol],['Ingreso (molinete)',r=>fmtDT(r.ing)],['Salida (molinete)',r=>fmtDT(r.sal)],['Jornada (h:mm)',r=>r.h!=null?fmtMin(r.h*60):''],['Jornada (h)',r=>r.h!=null?Math.round(r.h*100)/100:'',1],['Planillas del día',r=>r.pl,1],['Datos completados',r=>(r.imp||[]).join(', ')],['Observaciones',r=>r.obs.join('; ')]];
 let jPage=0;function jDetRows(J){const q=norm($('#jQDet').value);return q?J.filter(r=>norm(r.chofer+r.dni+r.fecha).includes(q)):J}
 function renderJDet(J){const MX=parseFloat($('#jMax').value)||8;const rows=jDetRows(J);const pages=Math.max(1,Math.ceil(rows.length/PG));jPage=Math.min(jPage,pages-1);window._jdet=rows;
   $('#tblJDet').innerHTML='<thead><tr>'+JCOLS.map(c=>`<th class="${c[2]?'n':''}">${c[0]}</th>`).join('')+'</tr></thead><tbody>'+rows.slice(jPage*PG,jPage*PG+PG).map(r=>'<tr>'+JCOLS.map(c=>{const v=esc(c[1](r));const rd=r.h!=null&&r.h>MX&&/Jornada/.test(c[0]);return`<td class="${c[2]?'n':''}" ${rd?'style="color:var(--crit);font-weight:700"':''}>${v}</td>`}).join('')+'</tr>').join('')+'</tbody>';
@@ -2140,7 +2196,10 @@ async function exportTiemposXlsx(){
   busy(true,'Armando el Excel de tiempos…');await new Promise(r=>setTimeout(r,30));
   try{const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Tiempos calculados · Tablero de Control de Tiempos'],['Generado el',new Date().toLocaleString('es-AR')],[],['Este archivo se puede consultar en Excel y también subir en otra copia del tablero (Cargar bases): trae todos los datos para armar todas las pestañas. No borres ni edites la hoja oculta _DATOS.']]),'TIEMPOS_INFO');
-    const add=(name,cols,rows)=>{if(!rows.length)return;const aoa=[cols.map(c=>c[0])];rows.forEach(r=>aoa.push(cols.map(c=>c[1](r))));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),name)};
+    const add=(name,cols,rows)=>{if(!rows.length)return;const aoa=[cols.map(c=>c[0])],Z=[];XM=true;
+      try{rows.forEach((r,i)=>aoa.push(cols.map((c,j)=>{const v=c[1](r);if(v&&v.__x){Z.push([i+1,j,v.z]);return v.v}if(typeof v==='string'&&/^-?\d{1,15}(\.\d+)?$/.test(v))return Number(v);return v})))}finally{XM=false}
+      const ws=XLSX.utils.aoa_to_sheet(aoa);for(const[r,c,z] of Z){const a=XLSX.utils.encode_cell({r,c});if(ws[a])ws[a].z=z}
+      ws['!cols']=cols.map(c=>({wch:Math.max(10,Math.min(30,c[0].length+2))}));ws['!autofilter']={ref:ws['!ref']};XLSX.utils.book_append_sheet(wb,ws,name)};
     add('PRE RUTA',BCOLS,REC);add('EN RUTA',RCOLS,RREC);add('POST RUTA',PCOLS,PREC);add('JORNADA',JCOLS,JREC);
     add('KM PLAN VS REAL',[['Fecha',x=>fmtD(x.f)],['Patente',x=>x.pat],['OL',x=>x.ol],['Planillas',x=>x.n],['Km planificados',x=>x.plan!=null?Math.round(x.plan*10)/10:''],['Km reales (Geotab)',x=>x.real??'']],KM);
     if(BASES.some(b=>STORE[b.k])){const parts=await fullParts();busy(true,'Armando el Excel de tiempos… datos para otra copia');await new Promise(r=>setTimeout(r,10));
@@ -2171,6 +2230,67 @@ async function importFullLines(lines,fname,log){
 $('#btnFull').onclick=exportFullJson;$('#btnTiempos').onclick=exportTiemposXlsx;
 
 /* =================================================================
+   GOOGLE SHEETS (planilla publicada en la web)
+================================================================= */
+const GS_DEF=''; // enlace fijo opcional: si se completa, el tablero lo usa en cualquier navegador
+const GS_K='tt_gs'+NS;
+const gsGet=()=>{try{const o=JSON.parse(localStorage.getItem(GS_K)||'null');if(o&&o.url!=null)return o}catch(e){}return{url:GS_DEF}};
+const gsSet=o=>{try{localStorage.setItem(GS_K,JSON.stringify(o))}catch(e){}};
+function gsNorm(u){u=(u||'').trim();if(!u)return'';let url;try{url=new URL(u)}catch(e){return''}
+  let m=u.match(/docs\.google\.com\/spreadsheets\/d\/e\/([^/?#]+)/);
+  if(m){const gid=url.searchParams.get('gid');const out=url.searchParams.get('output');
+    if(gid)return `https://docs.google.com/spreadsheets/d/e/${m[1]}/pub?gid=${gid}&single=true&output=csv`;
+    if(out==='csv')return `https://docs.google.com/spreadsheets/d/e/${m[1]}/pub?output=csv`;
+    return `https://docs.google.com/spreadsheets/d/e/${m[1]}/pub?output=xlsx`}
+  m=u.match(/docs\.google\.com\/spreadsheets\/d\/([^/?#]+)/);
+  if(m){const gid=url.searchParams.get('gid')||(url.hash.match(/gid=(\d+)/)||[])[1];return `https://docs.google.com/spreadsheets/d/${m[1]}/export?format=${gid?'csv&gid='+gid:'xlsx'}`}
+  return u}
+function csvDatos(text){const L=text.split(/\r?\n/);const out=[];let cur='';
+  for(let i=0;i<L.length;i++){const l=L[i];if(!l)continue;const k=l.lastIndexOf(',');let a=k<0?l:l.slice(0,k),b=k<0?'':l.slice(k+1).trim().replace(/"/g,'');
+    if(a.length>1&&a[0]==='"'&&a[a.length-1]==='"')a=a.slice(1,-1).replace(/""/g,'"');
+    if(i===0&&a.trim()==='datos')continue;cur+=a;if(b==='1'){out.push(cur);cur=''}}
+  if(cur)out.push(cur);return out}
+function hashLines(lines){let h=2166136261,n=0;for(const l of lines){n+=l.length;for(let i=0;i<l.length;i+=7){h^=l.charCodeAt(i);h=Math.imul(h,16777619)}}return(h>>>0).toString(36)+'.'+n}
+function gsShow(extra){if(!COPIA)return;const g=gsGet();$('#gsUrl').value=g.url||'';
+  $('#gsMsg').innerHTML=(extra?extra+'<br>':'')+(g.url?`Enlace guardado${g.at?` · última actualización desde Sheets: <b>${new Date(g.at).toLocaleString('es-AR')}</b>`:' · todavía no se cargó'}`:'Sin enlace de Google Sheets: el tablero usa las bases cargadas a mano.')}
+let gsBusy=false;
+async function gsSync(force){
+  const g=gsGet();if(!g.url||gsBusy)return;const url=gsNorm(g.url);if(!url){gsShow('✗ El enlace no es válido.');return}
+  gsBusy=true;busy(true,'Leyendo la base desde Google Sheets…');
+  try{
+    const r=await fetch(url,{cache:'no-store',redirect:'follow'});if(!r.ok)throw new Error('Google respondió '+r.status+(r.status===404||r.status===400?' (¿la planilla está publicada?)':''));
+    const ct=r.headers.get('content-type')||'';let lines;
+    if(/csv|text\/plain/.test(ct)){busy(true,'Leyendo la base desde Google Sheets… (descargando)');lines=csvDatos(await r.text())}
+    else if(/html/.test(ct))throw new Error('el enlace abre una página y no los datos: publicá la hoja _DATOS como .csv');
+    else{const buf=await r.arrayBuffer();busy(true,'Leyendo la base desde Google Sheets… (abriendo planilla)');const sheets=await readFile(new File([buf],'Google Sheets.xlsx'));
+      const DT=sheets.find(x=>x.name==='_DATOS');if(!DT)throw new Error('la planilla no tiene la hoja _DATOS');lines=[];let cur='';
+      for(let i=1;i<DT.aoa.length;i++){const x=DT.aoa[i];if(!x)continue;cur+=String(x[0]??'');if(+x[1]===1){lines.push(cur);cur=''}}if(cur)lines.push(cur)}
+    if(!lines.length||!lines[0].includes('"tablero":"'+FULL_TAG+'"'))throw new Error('la hoja publicada no es la hoja _DATOS de una base del tablero');
+    const sig=hashLines(lines);const have=BASES.some(b=>STORE[b.k]);
+    if(!force&&have&&g.sig===sig){busy(false);gsShow('✓ La planilla no cambió: se usan los datos ya guardados.');gsBusy=false;return}
+    for(const b of BASES){delete STORE[b.k];await idb.del(b.k)}
+    const log=['Base desde Google Sheets'];const nb=await importFullLines(lines,'Google Sheets',log);
+    if(!nb)throw new Error('la planilla no trae bases para cargar');
+    gsSet(Object.assign(gsGet(),{sig,at:Date.now()}));busy(false);renderBases();$('#procMsg').innerHTML=log.map(esc).join('<br>');LASTLOG=log;
+    gsShow('✓ Base actualizada desde Google Sheets.');buildAndShow(false);
+  }catch(e){console.error(e);busy(false);const msg=e&&e.message||String(e);
+    gsShow('✗ No se pudo leer la planilla: '+esc(/Failed to fetch|NetworkError|Load failed/i.test(msg)?'no hubo conexión con Google o la planilla no está publicada en la web':msg)+'. Se siguen usando las bases guardadas en este navegador.');toast('No se pudo leer Google Sheets')}
+  gsBusy=false}
+$('#gsSave').onclick=()=>{const u=$('#gsUrl').value.trim();if(!gsNorm(u)){toast('Pegá el enlace de "Publicar en la web"');return}gsSet({url:u});gsSync(true)};
+$('#gsNow').onclick=()=>{if(!gsGet().url){toast('Primero guardá el enlace');return}gsSync(true)};
+$('#gsOff').onclick=()=>{gsSet({url:''});gsShow();toast('Enlace quitado')};
+async function exportSheetsXlsx(){
+  if(!BASES.some(b=>STORE[b.k])){toast('No hay bases cargadas para descargar');return}
+  busy(true,'Armando la base para Google Sheets…');await new Promise(r=>setTimeout(r,30));
+  try{const parts=await fullParts();const aoa=[['datos','']];const C=30000;for(const ln of parts){const t=ln.replace(/\n$/,'');for(let i=0;i<t.length;i+=C)aoa.push([t.slice(i,i+C),i+C>=t.length?1:0])}
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'_DATOS');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Base del Tablero de Control de Tiempos para Google Sheets'],['Generado el',new Date().toLocaleString('es-AR')],[],['Publicá en la web la hoja _DATOS como .csv y pegá el enlace en el tablero (Cargar bases → Base en Google Sheets). No edites la hoja _DATOS a mano.']]),'LEEME');
+    const buf=XLSX.write(wb,{type:'array',bookType:'xlsx',compression:true});busy(false);const d=new Date();
+    await saveFile(`Base_tiempos_Google_Sheets_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.xlsx`,new Blob([buf]));
+  }catch(e){busy(false);console.error(e);toast('No se pudo generar el archivo: '+(e&&e.message||e))}}
+$('#btnGs').onclick=exportSheetsXlsx;
+
+/* =================================================================
    COPY / METAS / NAV
 ================================================================= */
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy]');if(!b)return;let tsv;
@@ -2183,11 +2303,11 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy
   try{await navigator.clipboard.writeText(tsv);toast('Copiado: pegalo en Excel')}catch(err){const ta=document.createElement('textarea');ta.value=tsv;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copiado: pegalo en Excel')}catch(e2){toast('No se pudo copiar')}ta.remove()}});
 function openMetas(){
   const it=[['hd','Tiempo total pre ruta'],['tot','Meta de tiempo (mediana) por ruta','Fichada → salida, aplica a todas las rutas'],['hd','Tramos sin encierro'],...TS.map(t=>[t.k,t.n,'']),['hd','Tramos con encierro'],...TC.map(t=>[t.k,t.n,'']),
-    ['hd','Parámetros'],['encH','Umbral de encierro (horas)','Fichada − hora de carga 450 mayor a esto = ENCIERRO'],['encGeo','Estimar encierro con geocercas si falta la hora 450 (1 = sí, 0 = no)','Sin paso por dock = ENCIERRO; con paso por dock = NO ENCIERRO'],['maxTot','Descartar tiempos mayores a (min)','Para filtrar errores de registro']];
+    ['hd','Parámetros'],['encH','Umbral de encierro (horas)','Fichada − hora de carga 450 mayor a esto = ENCIERRO'],['encGeo','Estimar encierro con geocercas si falta la hora 450 (1 = sí, 0 = no)','Sin paso por dock = ENCIERRO; con paso por dock = NO ENCIERRO'],['maxTot','Descartar tiempos mayores a (min)','Para filtrar errores de registro'],['finMax','Post ruta: reemplazar financiero mayor a (min)','Se reemplaza por un valor entre 10 y 15 min (p. ej. por segunda vuelta)']];
   $('#metasForm').innerHTML=it.map(([k,n,d])=>k==='hd'?`<div class="hd">${n}</div>`:`<label>${n}${d?`<small>${d}</small>`:''}</label><input type="number" min="0" step="any" data-k="${k}" value="${METAS[k]}">`).join('');
   $('#mMetas').classList.add('on')}
 $('#btnMetas').onclick=openMetas;$('#mMetas').onclick=e=>{if(e.target.id==='mMetas')$('#mMetas').classList.remove('on')};
-$('#metasOk').onclick=()=>{$$('#metasForm input').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))METAS[i.dataset.k]=v});try{localStorage.setItem('tt4_metas'+NS,JSON.stringify(METAS))}catch(e){}$('#mMetas').classList.remove('on');build();renderAll()};
+$('#metasOk').onclick=()=>{$$('#metasForm input').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))METAS[i.dataset.k]=v});try{localStorage.setItem('tt5_metas'+NS,JSON.stringify(METAS))}catch(e){}$('#mMetas').classList.remove('on');build();renderAll()};
 $('#metasReset').onclick=()=>{METAS=Object.assign({},META_DEF);openMetas()};
 function renderAll(){if($('#v-jor').classList.contains('on'))renderJor();if($('#v-arbol').classList.contains('on'))renderTree();if($('#v-post').classList.contains('on'))renderPost();if($('#v-ruta').classList.contains('on'))renderRuta();if($('#v-pre').classList.contains('on'))renderPre();if($('#v-base').classList.contains('on'))renderBase()}
 function go(v){$$('#tabs button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));if(v==='pre')renderPre();if(v==='base')renderBase();if(v==='ruta')renderRuta();if(v==='post')renderPost();if(v==='arbol')renderTree();if(v==='jor')renderJor();if(v==='carga')renderDiag();try{if(location.hash!=='#'+v)history.replaceState(null,'','#'+v)}catch(e){}}
@@ -2228,7 +2348,8 @@ async function startApp(){renderBases();const saved=await idb.all();let any=fals
   PRE.deleted=new Set(saved.__meta?.deleted||[]);
   try{await cleanStored()}catch(e){console.error(e)}
   renderBases();try{if(STORE.salida){build();setupFilters()}buildPost();setupPFilters();buildJor();setupJFilters();if(STORE.bees71){buildRuta();setupRFilters()}setupTFilters();if(any)$('#procMsg').innerHTML=`Bases cargadas${REC.length?' · Pre ruta: <b>'+REC.length+'</b> planillas':''}${RREC.length?' · En ruta: <b>'+RREC.length+'</b> planillas':''}`}catch(e){console.error(e)}
-  renderDiag();const h=location.hash.slice(1);if(['base','pre','ruta','post','arbol','jor'].includes(h))go(h)}
+  renderDiag();const h=location.hash.slice(1);if(['base','pre','ruta','post','arbol','jor'].includes(h))go(h);
+  if(!COPIA){const g=$('#gsCard');if(g)g.remove()}else{gsShow();if(gsGet().url)setTimeout(()=>gsSync(false),300)}}
 </script>
 </body>
 </html>
